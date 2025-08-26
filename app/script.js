@@ -37,7 +37,7 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
 
     try {
         // Use fetch API to send a POST request
-        const response = await fetch('http://34.130.185.8:8080', {
+        const response = await fetch('https://34.130.185.8:8080', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
