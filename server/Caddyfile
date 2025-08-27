@@ -1,0 +1,3 @@
+https://rec-centre-lstm.camdvr.org {
+    reverse_proxy localhost:8080
+}

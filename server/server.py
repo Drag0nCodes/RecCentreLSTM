@@ -16,7 +16,6 @@ except ImportError:
 
 # --- Flask App and LSTM Model Setup ---
 app = Flask(__name__)
-# Enable CORS for all domains, allowing your HTML page to connect
 CORS(app)
 
 # Config
@@ -139,4 +138,4 @@ if __name__ == '__main__':
     # Load the model and scalers here, before the server starts listening
     load_model()
     # Run the Flask app on all interfaces
-    app.run(host='0.0.0.0', port=8080, ssl_context=('cert.pem', 'key.pem'))
+    app.run(host='0.0.0.0', port=8080)

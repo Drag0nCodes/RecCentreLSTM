@@ -1,0 +1,21 @@
+Check for processes
+sudo netstat -tulpn | grep 8080
+
+Kill processes
+sudo kill -9 ...
+
+
+Enter python vm
+source rec-centre-server/bin/activate 
+
+Leave python vm
+deactivate rec-centre-server
+
+
+Start caddy
+cd ~/RecCentreLSTM/server
+sudo caddy run
+
+Start server
+cd ~/RecCentreLSTM/server
+sudo python3 server.py
