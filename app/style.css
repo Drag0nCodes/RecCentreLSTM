@@ -1,3 +1,7 @@
+:root {
+    --bs-primary: #4F2683;
+    --bs-primary-rgb: 79, 38, 131; 
+}
 body {
     font-family: 'Inter', sans-serif;
     background-color: #f0f2f5; /* Light grey background */
@@ -31,13 +35,17 @@ body {
  background-color: #4F2683 !important; 
  border-color: #4F2683 !important;
 }
+.btn-primary:focus {
+    background-color: #8F55E0; 
+    border-color: #8F55E0;
+   }
 .btn-primary:disabled {
     background-color: #818284;
     border-color: #818284;
 }
 .graph-placeholder {
     min-height: 300px;
-    background-color: #e9ecef; /* Light grey for graph area */
+    background-color: #f0f2f4; /* Light grey for graph area */
     border-radius: 8px;
     display: flex;
     align-items: center;
@@ -59,4 +67,8 @@ body {
 canvas {
     max-width: 100%; /* Ensure canvas is responsive */
     height: auto;
+}
+.accordion-button:not(.collapsed) {
+    background-color: #FFFFFF; /* A light blue color */
+    color: #4F2683; /* Bootstrap's primary blue color */
 }

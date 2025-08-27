@@ -96,11 +96,11 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
                         {
                             label: 'Input WR Values',
                             data: inputHours.map((h, i) => ({ x: h, y: inputValues[i] })),
-                            borderColor: 'rgb(255, 99, 132)', // Distinct color for input
-                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgb(79, 38, 131)', // Distinct color for input
+                            backgroundColor: 'rgba(79, 38, 131, 0.2)',
                             fill: false,
                             tension: 0.4,
-                            pointBackgroundColor: 'rgb(255, 99, 132)',
+                            pointBackgroundColor: 'rgb(79, 38, 131)',
                             pointRadius: 5,
                             pointHoverRadius: 7,
                             spanGaps: true // Ensures line continues smoothly
@@ -108,13 +108,13 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
                         {
                             label: 'Predicted WR Values',
                             data: predictedHours.map((h, i) => ({ x: h, y: predictedValues[i] })),
-                            borderColor: 'rgb(54, 162, 235)', // Distinct color for predictions
-                            backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                            borderColor: 'rgb(154, 100, 246)', // Distinct color for predictions
+                            backgroundColor: 'rgba(154, 100, 246, 0.2)',
                             fill: false,
                             tension: 0.4,
                             borderDash: [5, 5], // Dashed line for forecast
-                            pointRadius: 3,
-                            pointHoverRadius: 5,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
                             spanGaps: true // Ensures line continues smoothly
                         }
                     ]
