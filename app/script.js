@@ -6,16 +6,68 @@ const int3label = document.getElementById('int3label');
 const int4label = document.getElementById('int4label');
 const int5label = document.getElementById('int5label');
 
-function changeHour(){
+// --- Helper function to display messages to the user ---
+const formMessage = document.getElementById('formMessage');
+
+function changeHour() {
     var hour = document.getElementById('inputHour').value;
-    int1label.innerHTML = "Hour " + (hour-4) + ":";
-    int2label.innerHTML = "Hour " + (hour-3) + ":";
-    int3label.innerHTML = "Hour " + (hour-2) + ":";
-    int4label.innerHTML = "Hour " + (hour-1) + ":";
-    int5label.innerHTML = "Hour " + hour + ":";
+    if (hour) {
+        hour = parseInt(hour);
+        int1label.innerHTML = "Hour " + (hour - 4) + ":";
+        int2label.innerHTML = "Hour " + (hour - 3) + ":";
+        int3label.innerHTML = "Hour " + (hour - 2) + ":";
+        int4label.innerHTML = "Hour " + (hour - 1) + ":";
+        int5label.innerHTML = "Hour " + hour + ":";
+    }
 }
 
-document.getElementById('dataForm').addEventListener('submit', async function (event) {
+// --- NEW: Event Listener for the Tweet Fetching Button ---
+document.getElementById('fetchTweetsBtn').addEventListener('click', async function() {
+    const fetchButton = this;
+    const fetchSpinner = fetchButton.querySelector('.spinner-border');
+    
+    // Show loading state
+    fetchButton.disabled = true;
+    fetchSpinner.style.display = 'inline-block';
+    formMessage.textContent = ''; // Clear previous messages
+
+    try {
+        // Use your actual server URL here
+        const response = await fetch('https://rec-centre-lstm.camdvr.org/gettweets', { // https://rec-centre-lstm.camdvr.org
+            method: 'GET'
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Populate the form fields with the fetched data
+        document.getElementById('inputDate').value = data.date;
+        document.getElementById('inputHour').value = data.hour;
+        
+        for (let i = 0; i < 5; i++) {
+            document.getElementById(`integer${i + 1}`).value = data.values[i];
+        }
+
+        // Update the hour labels after populating the form
+        changeHour();
+
+    } catch (error) {
+        console.error('Error fetching tweet data:', error);
+        formMessage.textContent = `Failed to fetch data: ${error.message}`;
+    } finally {
+        // Hide loading state
+        fetchButton.disabled = false;
+        fetchSpinner.style.display = 'none';
+    }
+});
+
+
+// --- UPDATED: Event Listener for the Prediction Form Submission ---
+document.getElementById('dataForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent default form submission
 
     const form = event.target;
@@ -24,7 +76,6 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
 
     const submitButton = form.querySelector('button[type="submit"]');
     const loadingSpinner = form.querySelector('.loading-spinner');
-    const formMessage = document.getElementById('formMessage');
     const graphArea = document.getElementById('graphArea');
     const myChartCanvas = document.getElementById('myChart');
 
@@ -36,8 +87,8 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
     myChartCanvas.style.display = 'none'; // Hide canvas during loading
 
     try {
-        // Use fetch API to send a POST request
-        const response = await fetch('https://rec-centre-lstm.camdvr.org', {
+        // UPDATED fetch URL to point to the /predict endpoint
+        const response = await fetch('https://rec-centre-lstm.camdvr.org/predict', { // https://rec-centre-lstm.camdvr.org
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -51,20 +102,15 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
         }
 
         const data = await response.json();
-        console.log('Server response:', data);
 
-        // Check if graph data is present and valid
         if (data.graph_data && Array.isArray(data.graph_data) && data.graph_data.length > 0) {
-            // Extract predicted hours and values from the server response
             const predictedHours = data.graph_data.map(item => item.hour);
             const predictedValues = data.graph_data.map(item => item.value);
 
-            // --- Get Input WR Values and Hours from the Form ---
             const lastKnownHour = parseInt(formData.get('submissionHour'));
             const inputHours = [];
             const inputValues = [];
 
-            // The form provides values for the 5 hours leading up to and including the last known hour
             for (let i = 0; i < 5; i++) {
                 const hour = lastKnownHour - 4 + i;
                 const value = parseFloat(formData.get(`integer${i + 1}`));
@@ -72,52 +118,44 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
                 inputValues.push(value);
             }
 
-            // To plot both lines, we need a continuous set of labels for the x-axis
-            // The predicted data already contains the last known hour, so we don't need to append it again.
             const allHours = [...new Set([...inputHours, ...predictedHours])].sort((a, b) => a - b);
             const allLabels = allHours;
 
-            // Destroy existing chart instance if it exists
             if (myChartInstance) {
                 myChartInstance.destroy();
             }
 
-            // Re-add the canvas to the graphArea after clearing previous content
-            graphArea.innerHTML = ''; // Clear loading message
+            graphArea.innerHTML = '';
             graphArea.appendChild(myChartCanvas);
-            myChartCanvas.style.display = 'block'; // Show canvas
+            myChartCanvas.style.display = 'block';
 
-            // Create the chart with two datasets
             myChartInstance = new Chart(myChartCanvas, {
                 type: 'line',
                 data: {
                     labels: allLabels,
-                    datasets: [
-                        {
-                            label: 'Input WR Values',
-                            data: inputHours.map((h, i) => ({ x: h, y: inputValues[i] })),
-                            borderColor: 'rgb(79, 38, 131)', // Distinct color for input
-                            backgroundColor: 'rgba(79, 38, 131, 0.2)',
-                            fill: false,
-                            tension: 0.4,
-                            pointBackgroundColor: 'rgb(79, 38, 131)',
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            spanGaps: true // Ensures line continues smoothly
-                        },
-                        {
-                            label: 'Predicted WR Values',
-                            data: predictedHours.map((h, i) => ({ x: h, y: predictedValues[i] })),
-                            borderColor: 'rgb(154, 100, 246)', // Distinct color for predictions
-                            backgroundColor: 'rgba(154, 100, 246, 0.2)',
-                            fill: false,
-                            tension: 0.4,
-                            borderDash: [5, 5], // Dashed line for forecast
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            spanGaps: true // Ensures line continues smoothly
-                        }
-                    ]
+                    datasets: [{
+                        label: 'Input WR Values',
+                        data: inputHours.map((h, i) => ({ x: h, y: inputValues[i] })),
+                        borderColor: 'rgb(79, 38, 131)',
+                        backgroundColor: 'rgba(79, 38, 131, 0.2)',
+                        fill: false,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgb(79, 38, 131)',
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        spanGaps: true
+                    }, {
+                        label: 'Predicted WR Values',
+                        data: predictedHours.map((h, i) => ({ x: h, y: predictedValues[i] })),
+                        borderColor: 'rgb(154, 100, 246)',
+                        backgroundColor: 'rgba(154, 100, 246, 0.2)',
+                        fill: false,
+                        tension: 0.4,
+                        borderDash: [5, 5],
+                        pointRadius: 5,
+                        pointHoverRadius: 7,
+                        spanGaps: true
+                    }]
                 },
                 options: {
                     responsive: true,
@@ -130,7 +168,6 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
                     },
                     scales: {
                         x: {
-                            beginAtZero: true,
                             title: {
                                 display: true,
                                 text: 'Hour of Day'
@@ -147,7 +184,8 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
                                 display: true,
                                 text: 'WR Value'
                             },
-                            beginAtZero: true
+                            beginAtZero: true,
+                            min: 0
                         }
                     }
                 }
@@ -160,15 +198,13 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
         console.error('Error submitting data:', error);
         formMessage.textContent = `Error: ${error.message}. Please check the server connection and ensure the model files are present.`;
         graphArea.innerHTML = `<p class="error-message">Failed to load forecast data. ${error.message}</p>`;
-        myChartCanvas.style.display = 'none'; // Ensure canvas is hidden on error
+        myChartCanvas.style.display = 'none';
     } finally {
-        // Hide loading state
         submitButton.disabled = false;
         loadingSpinner.style.display = 'none';
     }
 });
 
-// Function to set default date to today
 function setDefaultDate() {
     const today = new Date();
     const year = today.getFullYear();
@@ -176,4 +212,6 @@ function setDefaultDate() {
     const day = today.getDate().toString().padStart(2, '0');
     document.getElementById('inputDate').value = `${year}-${month}-${day}`;
 }
+
 setDefaultDate(); // Call on page load
+changeHour(); // Call on page load to set initial labels
