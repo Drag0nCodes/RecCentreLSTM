@@ -83,9 +83,6 @@ def get_tweets():
     tweets, and leaves hours with no tweets blank.
     """
     try:
-        app_twitter = Twitter("session")
-        app_twitter.connect() # Uses the session.json file
-        
         # Fetch a decent number of tweets to find the 5-hour sequence
         all_tweets = app_twitter.get_tweets("WesternWeightRm")
         timezone = pytz.timezone('America/Toronto')
@@ -127,7 +124,12 @@ def get_tweets():
         for i in range(5):
             # Check for data for each of the last 5 consecutive hours
             lookup_hour = latest_hour - timedelta(hours=(4 - i))
-            value = averaged_values.get(lookup_hour, "") # Default to blank if no tweet found for that hour
+            value = averaged_values.get(lookup_hour)
+            if value is None:
+                if 0 <= lookup_hour.hour <= 6:
+                    value = 0
+                else:
+                    value = ""
             final_values.append(value)
         
         response_data = {
@@ -217,5 +219,6 @@ def make_prediction():
 
 if __name__ == '__main__':
     load_model() # Load LSTM model
-    #app_twitter.connect() # Connect to twitter session
-    app.run(host='0.0.0.0', port=8080)
+    app_twitter.connect() # Connect to twitter session
+    #app.run(host='0.0.0.0', port=8080) # Server deployment
+    app.run(host='127.0.0.1', port=8080) # Local testing

@@ -21,7 +21,7 @@ function changeHour() {
     }
 }
 
-// --- NEW: Event Listener for the Tweet Fetching Button ---
+// Event Listener for the Tweet Fetching Button 
 document.getElementById('fetchTweetsBtn').addEventListener('click', async function() {
     const fetchButton = this;
     const fetchSpinner = fetchButton.querySelector('.spinner-border');
@@ -33,7 +33,8 @@ document.getElementById('fetchTweetsBtn').addEventListener('click', async functi
 
     try {
         // Use your actual server URL here
-        const response = await fetch('https://rec-centre-lstm.camdvr.org/gettweets', { // https://rec-centre-lstm.camdvr.org
+        const response = await fetch('http://127.0.0.1:8080/gettweets', { // Server deployment
+        //const response = await fetch('https://rec-centre-lstm.camdvr.org/gettweets', { // Local testing
             method: 'GET'
         });
 
@@ -66,7 +67,7 @@ document.getElementById('fetchTweetsBtn').addEventListener('click', async functi
 });
 
 
-// --- UPDATED: Event Listener for the Prediction Form Submission ---
+// Event Listener for the Prediction Form Submission 
 document.getElementById('dataForm').addEventListener('submit', async function(event) {
     event.preventDefault(); // Prevent default form submission
 
@@ -88,7 +89,8 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
 
     try {
         // UPDATED fetch URL to point to the /predict endpoint
-        const response = await fetch('https://rec-centre-lstm.camdvr.org/predict', { // https://rec-centre-lstm.camdvr.org
+        const response = await fetch('http://127.0.0.1:8080/predict', { // Server deployment
+        //const response = await fetch('https://rec-centre-lstm.camdvr.org/predict', { // Local testing
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -196,7 +198,7 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
 
     } catch (error) {
         console.error('Error submitting data:', error);
-        formMessage.textContent = `Error: ${error.message}. Please check the server connection and ensure the model files are present.`;
+        formMessage.textContent = `Error: ${error.message}. Please check the server connection and refresh your browser.`;
         graphArea.innerHTML = `<p class="error-message">Failed to load forecast data. ${error.message}</p>`;
         myChartCanvas.style.display = 'none';
     } finally {
