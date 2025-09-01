@@ -6,5 +6,5 @@ The best model, used for results, is in the LSTM/best model file.
 
 
 
-To try out the best model on your web browser, head to \[https://www.colinb.ca/RecCentreLSTM/app/](https://www.colinb.ca/RecCentreLSTM/app/)
+To try out the best model on your web browser, head to https://www.colinb.ca/RecCentreLSTM/app/
 
