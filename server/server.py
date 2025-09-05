@@ -12,6 +12,8 @@ from tweety import Twitter
 from tweety.exceptions import RateLimitReached
 from collections import defaultdict
 import csv
+import logging
+from logging.handlers import RotatingFileHandler
 
 # Import the LSTMModel from your local file
 try:
@@ -49,6 +51,18 @@ class TrafficCounter:
         
     def inc_LSTM(self):
         self.LSTM_requests += 1
+        
+# Configure file logging
+log_file_path = os.path.join(SCRIPT_DIR, 'server.log')
+handler = RotatingFileHandler(
+    log_file_path,
+    maxBytes=1024 * 1024,  # 1 MB
+    backupCount=5
+)
+handler.setLevel(logging.INFO)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
 
 # load the DotW prediction data (average WR per month, day_of_week, hour)
 dotwPred = []
@@ -100,8 +114,8 @@ def get_tweets():
     leading up to the latest tweet, averages values for any hour with multiple
     tweets, and leaves hours with no tweets blank.
     """
-    traffic.inc_twitter
-    print(f"{traffic.twitter_requests} requests to twitter endpoint")
+    traffic.inc_twitter()
+    app.logger.info(f"{traffic.twitter_requests} requests to twitter endpoint")
     
     try:
         # Fetch a decent number of tweets to find the 5-hour sequence
@@ -173,8 +187,8 @@ def get_tweets():
 @app.route('/predict', methods=['POST'])
 def make_prediction():
     """Endpoint for making a WR value prediction."""
-    traffic.inc_LSTM
-    print(f"{traffic.LSTM_requests} requests to predict endpoint")
+    traffic.inc_LSTM()
+    app.logger.info(f"{traffic.LSTM_requests} requests to predict endpoint")
     
     if not model:
         return jsonify({"error": "Model not loaded. Check server logs."}), 500
@@ -253,5 +267,5 @@ if __name__ == '__main__':
     load_model() # Load LSTM model
     app_twitter.connect() # Connect to twitter session
     traffic = TrafficCounter()
-    #app.run(host='0.0.0.0', port=8080) # Server deployment
-    app.run(host='127.0.0.1', port=8080) # Local testing
+    app.run(host='0.0.0.0', port=8080) # Local testing
+    #app.run(host='127.0.0.1', port=8080) # Server deployment

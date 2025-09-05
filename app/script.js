@@ -33,8 +33,8 @@ document.getElementById('fetchTweetsBtn').addEventListener('click', async functi
 
     try {
         // Use your actual server URL here
-        //const response = await fetch('http://127.0.0.1:8080/gettweets', { // Server deployment
-        const response = await fetch('https://rec-centre-lstm.camdvr.org/gettweets', { // Local testing
+        const response = await fetch('http://127.0.0.1:8080/gettweets', { // Local testing
+        //const response = await fetch('https://rec-centre-lstm.camdvr.org/gettweets', { // Server deployment
             method: 'GET'
         });
 
@@ -89,8 +89,8 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
 
     try {
         //fetch at /predict endpoint
-        //const response = await fetch('http://127.0.0.1:8080/predict', { // Server deployment
-        const response = await fetch('https://rec-centre-lstm.camdvr.org/predict', { // Local testing
+        const response = await fetch('http://127.0.0.1:8080/predict', { // Local testing
+        //const response = await fetch('https://rec-centre-lstm.camdvr.org/predict', { // Server deployment
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
