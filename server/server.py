@@ -275,5 +275,5 @@ if __name__ == '__main__':
     configure_logging()
     load_model() # Load LSTM model
     app_twitter.connect() # Connect to twitter session
-    app.run(host='0.0.0.0', port=8080) # Local testing
-    #app.run(host='127.0.0.1', port=8080) # Server deployment
+    #app.run(host='0.0.0.0', port=8080) # Local testing
+    app.run(host='127.0.0.1', port=8080) # Server deployment
