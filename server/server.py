@@ -24,7 +24,7 @@ except ImportError:
 app = Flask(__name__)
 CORS(app)
 
-# Twitter client sign in
+# Twitter client
 app_twitter = Twitter("session")
 
 # Config
@@ -39,6 +39,9 @@ HIDDEN_SIZE = 64
 NUM_LAYERS = 3
 OUTPUT_SIZE = 1
 SEQUENCE_LENGTH = 5
+
+twitter_requests = 0
+LSTM_requests = 0
 
 # load the DotW prediction data (average WR per month, day_of_week, hour)
 dotwPred = []
@@ -90,6 +93,9 @@ def get_tweets():
     leading up to the latest tweet, averages values for any hour with multiple
     tweets, and leaves hours with no tweets blank.
     """
+    twitter_requests += 1
+    print(f"{twitter_requests} requests to twitter endpoint")
+    
     try:
         # Fetch a decent number of tweets to find the 5-hour sequence
         all_tweets = app_twitter.get_tweets("WesternWeightRm")
@@ -160,6 +166,9 @@ def get_tweets():
 @app.route('/predict', methods=['POST'])
 def make_prediction():
     """Endpoint for making a WR value prediction."""
+    LSTM_requests += 1
+    print(f"{LSTM_requests} requests to predict endpoint")
+    
     if not model:
         return jsonify({"error": "Model not loaded. Check server logs."}), 500
 
