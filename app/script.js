@@ -149,7 +149,7 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
                 data: {
                     labels: allLabels,
                     datasets: [{
-                        label: 'Input WR Values',
+                        label: 'Input Values',
                         data: inputHours.map((h, i) => ({ x: h, y: inputValues[i] })),
                         borderColor: 'rgb(79, 38, 131)',
                         backgroundColor: 'rgba(79, 38, 131, 0.2)',
@@ -160,7 +160,7 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
                         pointHoverRadius: 7,
                         spanGaps: true
                     }, {
-                        label: 'Predicted WR Values',
+                        label: 'Predicted Values',
                         data: predictedHours.map((h, i) => ({ x: h, y: predictedValues[i] })),
                         borderColor: 'rgb(154, 100, 246)',
                         backgroundColor: 'rgba(154, 100, 246, 0.2)',
