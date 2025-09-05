@@ -24,7 +24,20 @@ except ImportError:
 
 # --- Flask App and LSTM Model Setup ---
 app = Flask(__name__)
+app.logger.handlers.clear()
 CORS(app)
+
+class TrafficCounter:
+    twitter_requests = 0
+    LSTM_requests = 0
+    
+    def inc_twitter(self):
+        self.twitter_requests += 1
+        
+    def inc_LSTM(self):
+        self.LSTM_requests += 1
+        
+traffic = TrafficCounter()
 
 # Twitter client
 app_twitter = Twitter("session")
@@ -42,28 +55,6 @@ NUM_LAYERS = 3
 OUTPUT_SIZE = 1
 SEQUENCE_LENGTH = 5
 
-class TrafficCounter:
-    twitter_requests = 0
-    LSTM_requests = 0
-    
-    def inc_twitter(self):
-        self.twitter_requests += 1
-        
-    def inc_LSTM(self):
-        self.LSTM_requests += 1
-        
-# Configure file logging
-log_file_path = os.path.join(SCRIPT_DIR, 'server.log')
-handler = RotatingFileHandler(
-    log_file_path,
-    maxBytes=1024 * 1024,  # 1 MB
-    backupCount=5
-)
-handler.setLevel(logging.INFO)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-handler.setFormatter(formatter)
-app.logger.addHandler(handler)
-
 # load the DotW prediction data (average WR per month, day_of_week, hour)
 dotwPred = []
 predRowIndex = -1 # Row from csv with ave values
@@ -76,6 +67,23 @@ model = None
 scaler = None
 wr_scaler = None
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+def configure_logging():
+    # Configures the application logger to write to a file.
+    log_file_path = os.path.join(SCRIPT_DIR, 'server.log')
+    handler = RotatingFileHandler(
+        log_file_path,
+        maxBytes=1024 * 1024,  # 1 MB
+        backupCount=5
+    )
+    handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
+    
+    # if a handler already exists prevent duplicate logs
+    if not any(isinstance(h, RotatingFileHandler) for h in app.logger.handlers):
+        app.logger.addHandler(handler)
+        app.logger.setLevel(logging.INFO)
 
 def load_model():
     """
@@ -264,8 +272,8 @@ def make_prediction():
         return jsonify({"error": f"Prediction failed: {e}"}), 500
 
 if __name__ == '__main__':
+    configure_logging()
     load_model() # Load LSTM model
     app_twitter.connect() # Connect to twitter session
-    traffic = TrafficCounter()
     app.run(host='0.0.0.0', port=8080) # Local testing
     #app.run(host='127.0.0.1', port=8080) # Server deployment
