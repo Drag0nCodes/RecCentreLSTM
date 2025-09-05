@@ -119,12 +119,14 @@
                     for the remainer of a given day based on the number of people in attendance for the previous 5 hours
                     of the day. You can automatically fill current attendance info by selecting "Fetch Latest Data from
                     Twitter/X" (note: this process can take a few seconds) or find it yourself by going to
-                    @WesternWeightRm on Twitter/X (linked above).
+                    @WesternWeightRm on Twitter/X (linked above). If the automatic fetch feature does not find a tweet
+                    for a given hour, it will leave the input blank.
                     <br><br>
 
                     After you've set your forecast options, click generate forecast and your input will be sent to
                     a Google Cloud Compute server that will run your input through the LSTM model and return the output
-                    to you. The output will be graphed as the Weightroom Forecast. <br><br>
+                    to you to be graphed. It will also return the average for the day of the week and month of the
+                    prediction graphed as a grey dotted line. <br><br>
 
                     If you are interested in reading more about the project, see my <a
                         href="https://www.colinb.ca/projects/#RecCentre" target="_blank">portfolio site here</a> or read

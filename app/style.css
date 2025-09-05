@@ -43,6 +43,21 @@ body {
     background-color: #818284;
     border-color: #818284;
 }
+.btn-secondary {
+    background-color: #818284;
+    border-color: #818284;
+    transition: all 0.3s ease;
+}
+.btn-secondary:hover {
+    background-color: #5f6061;
+    border-color: #5f6061;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.btn-secondary:active {
+ background-color: #818284 !important; 
+ border-color: #818284 !important;
+}
 .graph-placeholder {
     min-height: 300px;
     background-color: #f0f2f4; /* Light grey for graph area */

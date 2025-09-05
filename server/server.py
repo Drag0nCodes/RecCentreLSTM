@@ -6,13 +6,12 @@ import numpy as np
 import torch
 import joblib
 from datetime import datetime, timedelta
-
-# --- New Imports for Tweet Scraping ---
 import re
 import pytz
 from tweety import Twitter
 from tweety.exceptions import RateLimitReached
 from collections import defaultdict
+import csv
 
 # Import the LSTMModel from your local file
 try:
@@ -33,12 +32,21 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_LOAD_PATH = os.path.join(SCRIPT_DIR, 'lstm_wr_model.pth')
 SCALER_LOAD_PATH = os.path.join(SCRIPT_DIR, 'scaler.joblib')
 WR_SCALER_LOAD_PATH = os.path.join(SCRIPT_DIR, 'wr_scaler.joblib')
+PREDICTIONS_PATH = os.path.join(SCRIPT_DIR, 'DotWA.csv')
 
 INPUT_SIZE = 6
 HIDDEN_SIZE = 64
 NUM_LAYERS = 3
 OUTPUT_SIZE = 1
 SEQUENCE_LENGTH = 5
+
+# load the DotW prediction data (average WR per month, day_of_week, hour)
+dotwPred = []
+predRowIndex = -1 # Row from csv with ave values
+with open(PREDICTIONS_PATH, 'r', newline='') as f:
+    reader = csv.reader(f)
+    for row in reader:
+        dotwPred.append([float(val) for val in row])
 
 model = None
 scaler = None
@@ -184,6 +192,7 @@ def make_prediction():
 
         currentSequenceScaled = initialSequenceScaled.copy()
 
+        # Make prediction
         with torch.no_grad():
             for predHourOffset in range(1, 24 - startHour):
                 predDt = startDt + timedelta(hours=predHourOffset)
@@ -201,14 +210,21 @@ def make_prediction():
                 nextStepInputUnscaled = np.append(nextFeaturesActual, predictedWr)
                 nextStepInputScaled = scaler.transform(nextStepInputUnscaled.reshape(1, -1)).flatten()
                 currentSequenceScaled = np.vstack((currentSequenceScaled[1:], nextStepInputScaled))
-        
+                
+            dotwRowIndex = (predMonth - 1) * 7 + (predDotw - 1) # DotWA row index of csv
+            
         graph_data = [{"hour": h, "value": wr} for h, wr in zip(predictedHours, predictedWrs)]
+        
+        # Get DotWA array
+        if dotwRowIndex >= 0:
+            dotwRow = dotwPred[dotwRowIndex]
 
         response_body = {
             "message": "Prediction successful!",
             "submitted_date": data.get('submissionDate'),
             "submitted_hour": data.get('submissionHour'),
-            "graph_data": graph_data
+            "graph_data": graph_data,
+            "dotw_average_data": dotwRow
         }
 
         return jsonify(response_body)

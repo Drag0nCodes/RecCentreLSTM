@@ -88,7 +88,7 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
     myChartCanvas.style.display = 'none'; // Hide canvas during loading
 
     try {
-        // UPDATED fetch URL to point to the /predict endpoint
+        //fetch at /predict endpoint
         //const response = await fetch('http://127.0.0.1:8080/predict', { // Server deployment
         const response = await fetch('https://rec-centre-lstm.camdvr.org/predict', { // Local testing
             method: 'POST',
@@ -108,6 +108,11 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
         if (data.graph_data && Array.isArray(data.graph_data) && data.graph_data.length > 0) {
             const predictedHours = data.graph_data.map(item => item.hour);
             const predictedValues = data.graph_data.map(item => item.value);
+            const dotwAverageData = data.dotw_average_data;
+            const date = new Date(data.submitted_date);
+
+            const dayNames = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 
             const lastKnownHour = parseInt(formData.get('submissionHour'));
             const inputHours = [];
@@ -130,6 +135,14 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
             graphArea.innerHTML = '';
             graphArea.appendChild(myChartCanvas);
             myChartCanvas.style.display = 'block';
+
+            // Prepare the dotw data for charting
+            const dotwHours = allHours.map(hour => {
+                return {
+                    x: hour,
+                    y: dotwAverageData[hour]
+                };
+            });
 
             myChartInstance = new Chart(myChartCanvas, {
                 type: 'line',
@@ -156,6 +169,16 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
                         borderDash: [5, 5],
                         pointRadius: 5,
                         pointHoverRadius: 7,
+                        spanGaps: true
+                    }, {
+                        label: `Average for ${dayNames[date.getDay()]} in ${monthNames[date.getMonth()]}`,
+                        data: dotwHours,
+                        borderColor: 'rgb(129, 130, 132)',
+                        backgroundColor: 'rgba(129, 130, 132, 0.2)',
+                        fill: false,
+                        tension: 0.4,
+                        borderDash: [2, 2],
+                        pointRadius: 0, // No points for this line
                         spanGaps: true
                     }]
                 },
