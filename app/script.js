@@ -179,6 +179,7 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
                         tension: 0.4,
                         borderDash: [2, 2],
                         pointRadius: 0, // No points for this line
+                        pointHoverRadius: 7,
                         spanGaps: true
                     }]
                 },
