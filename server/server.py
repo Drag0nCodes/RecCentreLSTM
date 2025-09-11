@@ -27,18 +27,6 @@ app = Flask(__name__)
 app.logger.handlers.clear()
 CORS(app)
 
-class TrafficCounter:
-    twitter_requests = 0
-    LSTM_requests = 0
-    
-    def inc_twitter(self):
-        self.twitter_requests += 1
-        
-    def inc_LSTM(self):
-        self.LSTM_requests += 1
-        
-traffic = TrafficCounter()
-
 # Twitter client
 app_twitter = Twitter("session")
 
@@ -48,6 +36,25 @@ MODEL_LOAD_PATH = os.path.join(SCRIPT_DIR, 'lstm_wr_model.pth')
 SCALER_LOAD_PATH = os.path.join(SCRIPT_DIR, 'scaler.joblib')
 WR_SCALER_LOAD_PATH = os.path.join(SCRIPT_DIR, 'wr_scaler.joblib')
 PREDICTIONS_PATH = os.path.join(SCRIPT_DIR, 'DotWA.csv')
+
+class TrafficCounter:
+    twitter_requests = 0
+    LSTM_requests = 0
+    
+    try:
+        with open(os.path.join(SCRIPT_DIR, "count.txt"), "r") as f:
+            LSTM_requests = int(f.read())
+    except FileNotFoundError:
+        with open(os.path.join(SCRIPT_DIR, "count.txt"), "w") as f:
+            f.write("0")
+    
+    def inc_twitter(self):
+        self.twitter_requests += 1
+        
+    def inc_LSTM(self):
+        self.LSTM_requests += 1
+        
+traffic = TrafficCounter()
 
 INPUT_SIZE = 6
 HIDDEN_SIZE = 64
@@ -123,7 +130,7 @@ def get_tweets():
     tweets, and leaves hours with no tweets blank.
     """
     traffic.inc_twitter()
-    app.logger.info(f"{traffic.twitter_requests} requests to twitter endpoint")
+    app.logger.info(f"{traffic.twitter_requests} requests to twitter endpoint since restart")
     
     try:
         # Fetch a decent number of tweets to find the 5-hour sequence
@@ -197,6 +204,8 @@ def make_prediction():
     """Endpoint for making a WR value prediction."""
     traffic.inc_LSTM()
     app.logger.info(f"{traffic.LSTM_requests} requests to predict endpoint")
+    with open(os.path.join(SCRIPT_DIR, "count.txt"), "w") as f:
+        f.write(str(traffic.LSTM_requests))
     
     if not model:
         return jsonify({"error": "Model not loaded. Check server logs."}), 500
@@ -270,6 +279,18 @@ def make_prediction():
     except Exception as e:
         print(f"Error during prediction: {e}")
         return jsonify({"error": f"Prediction failed: {e}"}), 500
+    
+# Forecast count endpoint 
+@app.route('/getforecastcount', methods=['GET'])
+def get_forecast_count():
+    """
+    Return the number of predictions made by the model
+    """
+    response_data = {
+        "count": traffic.LSTM_requests
+    }
+        
+    return jsonify(response_data)
 
 if __name__ == '__main__':
     configure_logging()

@@ -22,17 +22,17 @@ function changeHour() {
 }
 
 // Event Listener for the Tweet Fetching Button 
-document.getElementById('fetchTweetsBtn').addEventListener('click', async function() {
+document.getElementById('fetchTweetsBtn').addEventListener('click', async function () {
     const fetchButton = this;
     const fetchSpinner = fetchButton.querySelector('.spinner-border');
-    
+
     // Show loading state
     fetchButton.disabled = true;
     fetchSpinner.style.display = 'inline-block';
     formMessage.textContent = ''; // Clear previous messages
 
     try {
-        // Use your actual server URL here
+        // Fetch at /gettweets endpoint
         //const response = await fetch('http://127.0.0.1:8080/gettweets', { // Local testing
         const response = await fetch('https://rec-centre-lstm.camdvr.org/gettweets', { // Server deployment
             method: 'GET'
@@ -48,7 +48,7 @@ document.getElementById('fetchTweetsBtn').addEventListener('click', async functi
         // Populate the form fields with the fetched data
         document.getElementById('inputDate').value = data.date;
         document.getElementById('inputHour').value = data.hour;
-        
+
         for (let i = 0; i < 5; i++) {
             document.getElementById(`integer${i + 1}`).value = data.values[i];
         }
@@ -68,7 +68,7 @@ document.getElementById('fetchTweetsBtn').addEventListener('click', async functi
 
 
 // Event Listener for the Prediction Form Submission 
-document.getElementById('dataForm').addEventListener('submit', async function(event) {
+document.getElementById('dataForm').addEventListener('submit', async function (event) {
     event.preventDefault(); // Prevent default form submission
 
     const form = event.target;
@@ -215,6 +215,11 @@ document.getElementById('dataForm').addEventListener('submit', async function(ev
                     }
                 }
             });
+
+            // Increase prediction count by one
+            const countheader = document.getElementById('forecastCount');
+            countheader.innerHTML = parseInt(countheader.innerHTML) + 1
+
         } else {
             graphArea.innerHTML = `<p class="text-warning">No valid forecast data received from the server.</p>`;
         }
@@ -238,5 +243,31 @@ function setDefaultDate() {
     document.getElementById('inputDate').value = `${year}-${month}-${day}`;
 }
 
-setDefaultDate(); // Call on page load
-changeHour(); // Call on page load to set initial labels
+
+document.addEventListener('DOMContentLoaded', async function (event) {
+    setDefaultDate(); // Call on page load
+    changeHour(); // Call on page load to set initial labels
+
+    // Get the prediction counter number and set the header value
+    const countheader = document.getElementById('forecastCount');
+    try {
+        //const response = await fetch('http://127.0.0.1:8080/getforecastcount', { // Local testing
+        const response = await fetch('https://rec-centre-lstm.camdvr.org/getforecastcount', { // Server deployment
+            method: 'GET'
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || `HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        // Populate fields with fetched data
+        countheader.innerHTML = data.count;
+
+    } catch (error) {
+        console.error('Error fetching tweet data:', error);
+        countheader.innerHTML = `N/A`;
+    }
+});
