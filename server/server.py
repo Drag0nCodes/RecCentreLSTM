@@ -120,7 +120,8 @@ def getDateFeatures(year, month, day):
         return weekOfYear, dayOfWeek
     except ValueError:
         return None, None
-
+    
+'''
 # Tweet Scraping Endpoint 
 @app.route('/gettweets', methods=['GET'])
 def get_tweets():
@@ -196,7 +197,7 @@ def get_tweets():
     except Exception as e:
         print(f"Error fetching tweets: {e}")
         return jsonify({"error": f"An error occurred while fetching tweets: {e}"}), 500
-
+'''
 
 # Prediction endpoint 
 @app.route('/predict', methods=['POST'])

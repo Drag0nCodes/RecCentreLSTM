@@ -1,156 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <title>Western Weightroom Forecaster</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
     <link href="style.css" rel="stylesheet" />
-</head>
+  </head>
 
-<body>
+  <body>
     <h2 class="p-4 pb-0"><b>Western Weightroom Forecaster</b></h2>
     <div class="container main-container">
-        <div class="text-center">
-            <h4 class="mb-0 d-inline">📈 Forecasts Generated: </h4>
-            <h4 class="d-inline" id="forecastCount"></h4>
-        </div>
+      <div class="text-center">
+        <h4 class="mb-0 d-inline">📈 Forecasts Generated:</h4>
+        <h4 class="d-inline" id="forecastCount"></h4>
+      </div>
     </div>
     <div class="container main-container">
-        <div class="row">
-            <div class="col-xl-6 form-section">
-                <h2 class="text-center mb-4">Input Options</h2>
-                <form id="dataForm">
-                    <div class="row">
-                        <div class="col-6 mb-2">
-                            <label for="inputDate" class="form-label">Date</label>
-                            <input type="date" class="form-control" id="inputDate" name="submissionDate" required>
-                        </div>
+      <div class="row">
+        <div class="col-xl-6 form-section">
+          <h2 class="text-center mb-4">Input Options</h2>
+          <form id="dataForm">
+            <div class="row">
+              <div class="col-6 mb-2">
+                <label for="inputDate" class="form-label">Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="inputDate"
+                  name="submissionDate"
+                  required
+                />
+              </div>
 
-                        <div class="col-6 mb-2">
-                            <label for="inputHour" class="form-label">Forecast Start Hour</label>
-                            <input type="number" class="form-control" id="inputHour" name="submissionHour" min="4"
-                                max="23" value="12" onchange="changeHour()" required>
-                            <small class="form-text text-muted">The hour the forecast will start.</small>
-                        </div>
-                    </div>
-
-                    <hr>
-
-                    <p class="text-muted pt-1 px-1">Enter the third-floor weightroom attendance values for the last 5
-                        consecutive hours.</p>
-                    <div class="row">
-                        <div class="col-md-1"></div>
-                        <div class="col-4 col-md-2 mb-3">
-                            <label for="integer1" id="int1label" class="form-label">Hour 8:</label>
-                            <input type="number" class="form-control" id="integer1" name="integer1" required>
-                        </div>
-                        <div class="col-4 col-md-2 mb-3">
-                            <label for="integer2" id="int2label" class="form-label">Hour 9:</label>
-                            <input type="number" class="form-control" id="integer2" name="integer2" required>
-                        </div>
-                        <div class="col-4 col-md-2 mb-3">
-                            <label for="integer3" id="int3label" class="form-label">Hour 10:</label>
-                            <input type="number" class="form-control" id="integer3" name="integer3" required>
-                        </div>
-                        <div class="col-6 col-md-2 mb-3">
-                            <label for="integer4" id="int4label" class="form-label">Hour 11:</label>
-                            <input type="number" class="form-control" id="integer4" name="integer4" required>
-                        </div>
-                        <div class="col-6 col-md-2 mb-3">
-                            <label for="integer5" id="int5label" class="form-label">Hour 12:</label>
-                            <input type="number" class="form-control" id="integer5" name="integer5" required>
-                        </div>
-                        <div class="col-md-1"></div>
-                    </div>
-
-                    <div class="row mt-2">
-                        <div class="col-6 d-grid gap-2">
-                            <button type="button" id="fetchTweetsBtn" class="btn btn-secondary">
-                                <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"
-                                    style="display: none;"></span>
-                                Fetch Latest Data from Twitter/X
-                            </button>
-                        </div>
-
-                        <div class="col-6 d-grid gap-2">
-                            <button type="submit" class="btn btn-primary btn-lg">
-                                <span class="spinner-border spinner-border-sm loading-spinner me-2" role="status"
-                                    aria-hidden="true"></span>
-                                Generate Forecast
-                            </button>
-                        </div>
-                    </div>
-
-                    <div id="formMessage" class="mt-3 text-center error-message"></div>
-                </form>
+              <div class="col-6 mb-2">
+                <label for="inputHour" class="form-label"
+                  >Forecast Start Hour</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="inputHour"
+                  name="submissionHour"
+                  min="4"
+                  max="23"
+                  value="12"
+                  onchange="changeHour()"
+                  required
+                />
+                <small class="form-text text-muted"
+                  >The hour the forecast will start.</small
+                >
+              </div>
             </div>
 
-            <div class="col-xl-6 graph-section">
-                <h2 class="text-center mb-4">Weightroom Forecast</h2>
-                <div id="graphArea" class="graph-placeholder">
-                    <p>Enter your data and click "Generate Forecast" to see the prediction.</p>
-                    <canvas id="myChart" style="display: none;"></canvas>
-                </div>
-                <div class="p-1">
-                    <small class="text-muted">Note: This tool does not take into account the actual <a
-                            href="https://www.uwo.ca/campusrec/schedules/index.html" target="_blank">hours of
-                            operation</a> of the Rec Centre.</small>
-                </div>
-                <div class="p-1 pb-0">
-                    <a class="twitter-timeline" href="https://twitter.com/WesternWeightRm?ref_src=twsrc%5Etfw">Tweets by
-                        WesternWeightRm</a>
-                    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-                </div>
+            <hr />
+
+            <p class="text-muted pt-1 px-1">
+              Enter the third-floor weightroom attendance values for the last 5
+              consecutive hours.
+            </p>
+            <div class="row">
+              <div class="col-md-1"></div>
+              <div class="col-4 col-md-2 mb-3">
+                <label for="integer1" id="int1label" class="form-label"
+                  >Hour 8:</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="integer1"
+                  name="integer1"
+                  required
+                />
+              </div>
+              <div class="col-4 col-md-2 mb-3">
+                <label for="integer2" id="int2label" class="form-label"
+                  >Hour 9:</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="integer2"
+                  name="integer2"
+                  required
+                />
+              </div>
+              <div class="col-4 col-md-2 mb-3">
+                <label for="integer3" id="int3label" class="form-label"
+                  >Hour 10:</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="integer3"
+                  name="integer3"
+                  required
+                />
+              </div>
+              <div class="col-6 col-md-2 mb-3">
+                <label for="integer4" id="int4label" class="form-label"
+                  >Hour 11:</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="integer4"
+                  name="integer4"
+                  required
+                />
+              </div>
+              <div class="col-6 col-md-2 mb-3">
+                <label for="integer5" id="int5label" class="form-label"
+                  >Hour 12:</label
+                >
+                <input
+                  type="number"
+                  class="form-control"
+                  id="integer5"
+                  name="integer5"
+                  required
+                />
+              </div>
+              <div class="col-md-1"></div>
             </div>
+
+            <div class="row mt-2">
+              <!--
+                <div class="col-12 d-grid gap-2">
+                <button
+                  type="button"
+                  id="fetchTweetsBtn"
+                  class="btn btn-secondary"
+                >
+                  <span
+                    class="spinner-border spinner-border-sm me-2"
+                    role="status"
+                    aria-hidden="true"
+                    style="display: none"
+                  ></span>
+                  Fetch Latest Data from Twitter/X
+                </button>
+              </div>
+            -->
+
+              <div class="col-12 d-grid gap-2">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <span
+                    class="spinner-border spinner-border-sm loading-spinner me-2"
+                    role="status"
+                    aria-hidden="true"
+                  ></span>
+                  Generate Forecast
+                </button>
+              </div>
+            </div>
+
+            <div id="formMessage" class="mt-3 text-center error-message"></div>
+          </form>
         </div>
+
+        <div class="col-xl-6 graph-section">
+          <h2 class="text-center mb-4">Weightroom Forecast</h2>
+          <div id="graphArea" class="graph-placeholder">
+            <p>
+              Enter your data and click "Generate Forecast" to see the
+              prediction.
+            </p>
+            <canvas id="myChart" style="display: none"></canvas>
+          </div>
+          <div class="p-1">
+            <small class="text-muted"
+              >Note: This tool does not take into account the actual
+              <a
+                href="https://www.uwo.ca/campusrec/schedules/index.html"
+                target="_blank"
+                >hours of operation</a
+              >
+              of the Rec Centre.</small
+            >
+          </div>
+          <div class="p-1 pb-0">
+            <a href="https://www.instagram.com/westernrecuserstats/"
+              >Posts by @WesternRecUserStats</a
+            >
+          </div>
+        </div>
+      </div>
     </div>
     <div class="accordion container main-container mb-4" id="accordion">
-        <div class="accordion-item">
-            <h2 class="accordion-header" id="howItWorksHeading">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#howItWorksCollapse" aria-expanded="false" aria-controls="howItWorksCollapse">
-                    How It Works
-                </button>
-            </h2>
-            <div id="howItWorksCollapse" class="accordion-collapse collapse" aria-labelledby="howItWorksHeading"
-                data-bs-parent="#accordion">
-                <div class="accordion-body">This attendance forecasting applet uses a RNN LSTM model to predict how many
-                    people will be in the third floor weightroom of the Western Recreation Centre. It makes a forecast
-                    for the remainer of a given day based on the number of people in attendance for the previous 5 hours
-                    of the day. You can automatically fill current attendance info by selecting "Fetch Latest Data from
-                    Twitter/X" (note: this process can take a few seconds) or find it yourself by going to
-                    @WesternWeightRm on Twitter/X (linked above). If the automatic fetch feature does not find a tweet
-                    for a given hour, it will leave the input blank.
-                    <br><br>
+      <div class="accordion-item">
+        <h2 class="accordion-header" id="howItWorksHeading">
+          <button
+            class="accordion-button collapsed"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#howItWorksCollapse"
+            aria-expanded="false"
+            aria-controls="howItWorksCollapse"
+          >
+            How It Works
+          </button>
+        </h2>
+        <div
+          id="howItWorksCollapse"
+          class="accordion-collapse collapse"
+          aria-labelledby="howItWorksHeading"
+          data-bs-parent="#accordion"
+        >
+          <div class="accordion-body">
+            This attendance forecasting applet uses a RNN LSTM model to predict
+            how many people will be in the third floor weightroom of the Western
+            Recreation Centre. It makes a forecast for the remainer of a given
+            day based on the number of people in attendance for the previous 5
+            hours of the day. You can find current attendance info by going to
+            @WesternRecUserStats on Instagram (linked above).<br /><br />
 
-                    After you've set your forecast options, click generate forecast and your input will be sent to
-                    a Google Cloud Compute server that will run your input through the LSTM model and return the output
-                    to you to be graphed. It will also return the average for the day of the week and month of the
-                    prediction graphed as a grey dotted line. <br><br>
+            After you've set your forecast options, click generate forecast and
+            your input will be sent to a Google Cloud Compute server that will
+            run your input through the LSTM model and return the output to you
+            to be graphed. It will also return the average for the day of the
+            week and month of the prediction graphed as a grey dotted line.
+            <br /><br />
 
-                    If you are interested in reading more about the project, see my <a
-                        href="https://www.colinb.ca/projects/#RecCentre" target="_blank">portfolio site here</a> or read
-                    the <a href="https://www.colinb.ca/projects/assets/CS4442%20Final%20Report.pdf" target="_blank">full
-                        project report here</a>.
-                </div>
-            </div>
+            If you are interested in reading more about the project, see my
+            <a href="https://www.colinb.ca/projects/#RecCentre" target="_blank"
+              >portfolio site here</a
+            >
+            or read the
+            <a
+              href="https://www.colinb.ca/projects/assets/CS4442%20Final%20Report.pdf"
+              target="_blank"
+              >full project report here</a
+            >.
+          </div>
         </div>
+      </div>
     </div>
 
     <div class="container mb-4">
-        <p class="text-muted text-center">Created by Colin Brown. Contact at <a href="mailto:cbrow388@uwo.ca">cbrow388@uwo.ca</a>.</p>
+      <p class="text-muted text-center">
+        Created by Colin Brown. Contact at
+        <a href="mailto:cbrow388@uwo.ca">cbrow388@uwo.ca</a>.
+      </p>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+      crossorigin="anonymous"
+    ></script>
     <script src="script.js"></script>
-</body>
-
+  </body>
 </html>
