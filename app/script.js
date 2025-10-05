@@ -22,7 +22,7 @@ function changeHour() {
 }
 
 // Event Listener for the Tweet Fetching Button 
-document.getElementById('fetchTweetsBtn').addEventListener('click', async function () {
+/*document.getElementById('fetchTweetsBtn').addEventListener('click', async function () {
     const fetchButton = this;
     const fetchSpinner = fetchButton.querySelector('.spinner-border');
 
@@ -64,7 +64,7 @@ document.getElementById('fetchTweetsBtn').addEventListener('click', async functi
         fetchButton.disabled = false;
         fetchSpinner.style.display = 'none';
     }
-});
+});*/
 
 
 // Event Listener for the Prediction Form Submission 
