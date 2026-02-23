@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -21,6 +21,14 @@
 
   <body>
     <h2 class="p-4 pb-0"><b>Western Weightroom Forecaster</b></h2>
+    <div class="container message-container">
+      <div class="text-center">
+        <p class="mb-0">
+          I'm currently in the process of migrating this app to a new server, so
+          it may be down for a couple days.
+        </p>
+      </div>
+    </div>
     <div class="container main-container">
       <div class="text-center">
         <h4 class="mb-0 d-inline">📈 Forecasts Generated:</h4>
@@ -156,17 +164,16 @@
             -->
 
               <div class="col-12 d-grid gap-2">
-                <button type="submit" class="btn btn-primary btn-lg">
+                <button type="submit" class="btn btn-primary btn-lg" disabled>
                   <span
                     class="spinner-border spinner-border-sm loading-spinner me-2"
                     role="status"
                     aria-hidden="true"
                   ></span>
-                  Generate Forecast
+                  Generate Forecast (try again later)
                 </button>
                 <div class="text-center text-muted">
-                  Note: Your first prediction may be slow while the model "wakes
-                  up" on the server.
+                  Note: Your first prediction may be slow
                 </div>
               </div>
             </div>

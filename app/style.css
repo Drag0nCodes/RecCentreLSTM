@@ -6,6 +6,17 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: #f0f2f5; /* Light grey background */
 }
+.message-container {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    padding: 15px;
+    background-color: #ffd7d7;
+    border-style: solid;
+    border-color: #ffabab;
+    border-width: 0.1em;
+    border-radius: 15px; /* Overall rounded corners */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
 .main-container {
     margin-top: 30px;
     margin-bottom: 30px;
