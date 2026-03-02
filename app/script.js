@@ -34,7 +34,7 @@ function changeHour() {
     try {
         // Fetch at /gettweets endpoint
         //const response = await fetch('http://127.0.0.1:8080/gettweets', { // Local testing
-        const response = await fetch('https://rec-centre-lstm.camdvr.org/gettweets', { // Server deployment
+        const response = await fetch('https://lstm.colinb.ca/gettweets', { // Server deployment
             method: 'GET'
         });
 
@@ -90,7 +90,7 @@ document.getElementById('dataForm').addEventListener('submit', async function (e
     try {
         //fetch at /predict endpoint
         //const response = await fetch('http://127.0.0.1:8080/predict', { // Local testing
-        const response = await fetch('https://rec-centre-lstm.camdvr.org/predict', { // Server deployment
+        const response = await fetch('https://lstm.colinb.ca/predict', { // Server deployment
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded'
@@ -252,7 +252,7 @@ document.addEventListener('DOMContentLoaded', async function (event) {
     const countheader = document.getElementById('forecastCount');
     try {
         //const response = await fetch('http://127.0.0.1:8080/getforecastcount', { // Local testing
-        const response = await fetch('https://rec-centre-lstm.camdvr.org/getforecastcount', { // Server deployment
+        const response = await fetch('https://lstm.colinb.ca/getforecastcount', { // Server deployment
             method: 'GET'
         });
 
